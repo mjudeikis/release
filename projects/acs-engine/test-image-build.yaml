@@ -5,15 +5,16 @@ parameters:
   displayName: oc version
   description: Version of oc to install in the acs-engine test image
   value: "3.9"
+- name: GOLANG_VERSION
+  displayName: golang version
+  description: defines base image to be used based on golang version
+  value: "1.9.1"
 objects:
-- kind: ImageStream
-  apiVersion: v1
-  metadata:
-    name: acs-engine-tests
 - kind: BuildConfig
   apiVersion: v1
   metadata:
-    name: acs-engine-tests
+    name: acs-engine-tests-${VERSION}
+    namespace: azure
   spec:
     successfulBuildsHistoryLimit: 1
     failedBuildsHistoryLimit: 2
@@ -22,16 +23,16 @@ objects:
         kind: ImageStreamTag
         name: "acs-engine-tests:v${VERSION}"
     source:
-      contextDir: "projects/acs-engine/test-image-v${VERSION}"
+      contextDir: "projects/acs-engine/test-image/${VERSION}"
       git:
-        uri: "https://github.com/openshift/release"
-        ref: "master"
+        uri: "https://github.com/mjudeikis/release"
+        ref: "acs_engine_refactor"
       type: Git
     strategy:
       dockerStrategy:
         from:
           kind: DockerImage
-          name: quay.io/deis/go-dev:v1.9.1
+          name: quay.io/deis/go-dev:v${GOLANG_VERSION}
         imageOptimizationPolicy: SkipLayers
     triggers:
     - type: ConfigChange

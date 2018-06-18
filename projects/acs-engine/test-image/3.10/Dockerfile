@@ -1,4 +1,4 @@
-FROM quay.io/deis/go-dev:v1.9.1
+FROM dummy
 
 RUN apt-get update && \
     wget https://github.com/openshift/origin/releases/download/v3.9.0/openshift-origin-client-tools-v3.9.0-191fece-linux-64bit.tar.gz && \
