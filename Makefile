@@ -2,6 +2,7 @@ export RELEASE_URL=https://github.com/openshift/release.git
 export RELEASE_REF=master
 export SKIP_PERMISSIONS_JOB=0
 export OPENSHIFT_VERSION_LIST=3.9.0 3.10.0 unstable
+export GOLANG_VERSION=1.9.1
 
 apply:
 	oc apply -f $(WHAT)
@@ -261,11 +262,9 @@ pod-utils:
 .PHONY: pod-utils
 
 acs-engine:
+	oc new-project azure --description='OpenShift on Azure' --display-name='OSA' ; \
 	$(MAKE) apply WHAT=projects/acs-engine/objects.yaml ; \
 	for name in ${OPENSHIFT_VERSION_LIST}; do \
-		oc process -f projects/acs-engine/test-image-build.yaml -p VERSION=$${name} | oc apply -f - ; \
+		oc process -f projects/acs-engine/test-image-build.yaml -p VERSION=$${name} -p GOLANG_VERSION=$${GOLANG_VERSION} | oc apply -f - ; \
 	done
 .PHONY: acs-engine
-
-test:
-	oc new-project azure --description='OpenShift on Azure' --display-name='OSA'
