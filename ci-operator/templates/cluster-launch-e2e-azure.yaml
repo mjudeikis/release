@@ -50,7 +50,7 @@ objects:
       emptyDir: {}
     - name: cluster-secrets-azure
       secret:
-        secretName: e2e-azure-secret
+        secretName: azure
 
     containers:
 
@@ -116,6 +116,9 @@ objects:
     # Runs an install
     - name: setup
       image: ${LOCAL_IMAGE_BIN}
+      # TODO: remove this when this is merged and released https://github.com/Azure/azure-cli/issues/7019 https://github.com/Azure/azure-cli/pull/7056
+      securityContext:
+        runAsUser: 1000040001
       volumeMounts:
       - name: shared-tmp
         mountPath: /tmp/shared
@@ -154,9 +157,7 @@ objects:
         export DEPLOY_OS="centos7"
         export IMAGE_RESOURCEGROUP=images
         # Azure cli fails miserably now with az image list 
-        # https://github.com/Azure/azure-cli/issues/7019
-        #export IMAGE_RESOURCENAME=$(az image list -g $IMAGE_RESOURCEGROUP -o json --query "[?starts_with(name, '${DEPLOY_OS:-rhel7}-${DEPLOY_VERSION//v}') && tags.valid=='true'].name | sort(@) | [-1]" | tr -d '"')
-        export IMAGE_RESOURCENAME=centos7-3.10-201808031447
+        export IMAGE_RESOURCENAME=$(az image list -g $IMAGE_RESOURCEGROUP -o json --query "[?starts_with(name, '${DEPLOY_OS:-rhel7}-${DEPLOY_VERSION//v}') && tags.valid=='true'].name | sort(@) | [-1]" | tr -d '"')
         # TODO: for full e2e image needs to be built too  
         cd /go/src/github.com/openshift/openshift-azure/
        

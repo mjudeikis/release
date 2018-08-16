@@ -21,7 +21,7 @@
 
   "canonical_go_repository": "github.com/openshift/openshift-azure",
 
-  "binary_build_commands": "make build sync",
+  "binary_build_commands": "make",
 
   "images": [
     {

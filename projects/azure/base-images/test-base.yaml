@@ -46,6 +46,9 @@ items:
             go get golang.org/x/tools/cmd/goyacc && \
             chmod 777 -R /go/bin
         RUN yum clean all
+        # Remove this part after https://github.com/Azure/azure-cli/issues/7019 https://github.com/Azure/azure-cli/pull/7056
+        RUN useradd -ms /bin/bash testuser --uid 1000040001
+        USER testuser
       type: Dockerfile
     strategy:
       dockerStrategy:
